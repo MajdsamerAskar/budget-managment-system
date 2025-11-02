@@ -1,0 +1,18 @@
+[
+  {
+    "id": 10,
+    "userId": 1,
+    "accountName": "Main Bank",
+    "type": "Bank",
+    "balance": 1250.5,
+    "createdAt": "2025-10-26"
+  },
+  {
+    "id": 11,
+    "userId": 2,
+    "accountName": "Cash Wallet",
+    "type": "Wallet",
+    "balance": 300.0,
+    "createdAt": "2025-10-29"
+  }
+]

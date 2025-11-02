@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1001,
+    "accountId": 10,
+    "categoryId": 2,
+    "paymentMethodId": 1,
+    "amount": 45.75,
+    "transactionType": "Expense",
+    "date": "2025-11-01",
+    "description": "Grocery Shopping"
+  },
+  {
+    "id": 1002,
+    "accountId": 10,
+    "categoryId": 1,
+    "paymentMethodId": 2,
+    "amount": 2000,
+    "transactionType": "Income",
+    "date": "2025-10-31",
+    "description": "Salary Payment"
+  }
+]

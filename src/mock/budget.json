@@ -1,0 +1,18 @@
+[
+  {
+    "id": 100,
+    "userId": 1,
+    "name": "November 2025 Budget",
+    "totalAmount": 2000,
+    "startDate": "2025-11-01",
+    "endDate": "2025-11-30"
+  },
+  {
+    "id": 101 , 
+    "userId" : 2, 
+    "name" : "November 2025 Budget", 
+    "totalAmount": 3500,
+    "startDate": "2025-11-01",
+    "endDate":"2025-11-30"
+  }
+]
