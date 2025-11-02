@@ -1,11 +1,7 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import HelloWorld from './components/HelloWorld.vue';
 </script>
 
-<template>
-  Hello world
-</template>
+<template>Hello world</template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
