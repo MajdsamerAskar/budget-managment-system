@@ -10,7 +10,7 @@ export interface Account {
   id: number;
   userId: number;
   accountName: string;
-  type: 'Bank' | 'Wallet' | 'Credit';
+  type: "Bank" | "Wallet" | "Credit";
   balance: number;
   createdAt: string;
 }
@@ -19,7 +19,7 @@ export interface Category {
   id: number;
   userId: number;
   name: string;
-  type: 'Income' | 'Expense';
+  type: "Income" | "Expense";
   description?: string;
 }
 
@@ -38,7 +38,7 @@ export interface Transaction {
   categoryId: number;
   paymentMethodId: number;
   amount: number;
-  transactionType: 'Income' | 'Expense';
+  transactionType: "Income" | "Expense";
   date: string;
   description?: string;
 }
@@ -46,3 +46,4 @@ export interface PaymentMethod {
   id: number;
   methodName: string;
 }
+
