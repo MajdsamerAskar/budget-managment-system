@@ -1,5 +1,0 @@
-[
-  { "id": 1, "methodName": "Cash" },
-  { "id": 2, "methodName": "Credit Card" },
-  { "id": 3, "methodName": "Bank Transfer" }
-]
