@@ -14,8 +14,11 @@
     "mock:server": "json-server --watch src/mock/db.json --port 4000"
   },
   "dependencies": {
+    "@primevue/themes": "^4.4.1",
     "@supabase/supabase-js": "^2.81.1",
     "pinia": "^3.0.3",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.4.1",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
   },
