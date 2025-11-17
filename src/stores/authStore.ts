@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { supabase } from '@/lib/supabase';
-import type { User } from '@/types';
+import type { User } from '@/types/types';
 
 export const useAuthStore = defineStore('auth', () => {
   // State
@@ -101,10 +101,15 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   return {
+    // State
     user,
     isLoading,
     error,
+    
+    // Getters
     isAuthenticated,
+    
+    // Actions
     signUp,
     signIn,
     signOut,
