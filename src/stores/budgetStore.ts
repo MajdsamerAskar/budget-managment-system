@@ -1,25 +1,25 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { supabase } from '@/lib/supabase';
-import type { Category } from '@/types/types';
+import type { Budget } from '@/types';
 
-export const useCategoryStore = defineStore('category', () => {
-  const categories = ref<Category[]>([]);
+export const useBudgetStore = defineStore('budget', () => {
+  const budgets = ref<Budget[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
-  const fetchCategories = async () => {
+  const fetchBudgets = async () => {
     try {
       isLoading.value = true;
       error.value = null;
 
       const { data, error: fetchError } = await supabase
-        .from('categories')
+        .from('budgets')
         .select('*')
-        .order('name');
+        .order('created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
-      categories.value = data || [];
+      budgets.value = data || [];
     } catch (err: any) {
       error.value = err.message;
     } finally {
@@ -27,19 +27,19 @@ export const useCategoryStore = defineStore('category', () => {
     }
   };
 
-  const addCategory = async (category: Omit<Category, 'id' | 'created_at'>) => {
+  const addBudget = async (budget: Omit<Budget, 'id' | 'created_at' | 'spent'>) => {
     try {
       isLoading.value = true;
       error.value = null;
 
       const { data, error: insertError } = await supabase
-        .from('categories')
-        .insert(category)
+        .from('budgets')
+        .insert({ ...budget, spent: 0 })
         .select()
         .single();
 
       if (insertError) throw insertError;
-      if (data) categories.value.push(data);
+      if (data) budgets.value.unshift(data);
       
       return data;
     } catch (err: any) {
@@ -50,13 +50,13 @@ export const useCategoryStore = defineStore('category', () => {
     }
   };
 
-  const updateCategory = async (id: string, updates: Partial<Category>) => {
+  const updateBudget = async (id: string, updates: Partial<Budget>) => {
     try {
       isLoading.value = true;
       error.value = null;
 
       const { data, error: updateError } = await supabase
-        .from('categories')
+        .from('budgets')
         .update(updates)
         .eq('id', id)
         .select()
@@ -64,9 +64,9 @@ export const useCategoryStore = defineStore('category', () => {
 
       if (updateError) throw updateError;
       
-      const index = categories.value.findIndex(c => c.id === id);
+      const index = budgets.value.findIndex(b => b.id === id);
       if (index !== -1 && data) {
-        categories.value[index] = data;
+        budgets.value[index] = data;
       }
 
       return data;
@@ -78,18 +78,18 @@ export const useCategoryStore = defineStore('category', () => {
     }
   };
 
-  const deleteCategory = async (id: string) => {
+  const deleteBudget = async (id: string) => {
     try {
       isLoading.value = true;
       error.value = null;
 
       const { error: deleteError } = await supabase
-        .from('categories')
+        .from('budgets')
         .delete()
         .eq('id', id);
 
       if (deleteError) throw deleteError;
-      categories.value = categories.value.filter(c => c.id !== id);
+      budgets.value = budgets.value.filter(b => b.id !== id);
     } catch (err: any) {
       error.value = err.message;
       throw err;
@@ -99,12 +99,12 @@ export const useCategoryStore = defineStore('category', () => {
   };
 
   return {
-    categories,
+    budgets,
     isLoading,
     error,
-    fetchCategories,
-    addCategory,
-    updateCategory,
-    deleteCategory
+    fetchBudgets,
+    addBudget,
+    updateBudget,
+    deleteBudget
   };
 });
