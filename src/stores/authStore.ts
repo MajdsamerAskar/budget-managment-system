@@ -118,7 +118,6 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = err.message;
       throw err;
     } finally {
-      // Note: checking loading false might not happen if redirect occurs immediately
       isLoading.value = false;
     }
   };
@@ -136,6 +135,7 @@ export const useAuthStore = defineStore('auth', () => {
     signUp,
     signIn,
     signOut,
-    fetchUser
+    fetchUser,
+    signInWithGoogle 
   };
 });

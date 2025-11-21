@@ -66,7 +66,12 @@
           <Button label="Login Now" class="login-btn" type="submit" />
 
           <!-- Google Button -->
-          <Button class="google-btn" :outlined="true">
+          <Button class="google-btn"
+           :outlined="true"
+           type="button"
+           @click="handleGoogleLogin"
+           :loading="authStore.isLoading"
+           >
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="google-icon" />
             <span>Login with Google</span>
           </Button>
@@ -121,7 +126,7 @@ const handleLogin = async () => {
     toast.add({ severity: 'success', summary: 'Success', detail: 'Logged in successfully', life: 3000 });
     
     // Redirect to Dashboard
-    router.push({ name: 'Dashboard' }); // Ensure you have a route named 'Dashboard' or path '/dashboard'
+    router.push({ name: 'Dashboard' }); 
 
   } catch (error) {
     // Error Handling
