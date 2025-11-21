@@ -11,16 +11,16 @@
           </div>
 
           <!-- Main Text -->
-          <h1>Hello<br />SaleSkip! <span class="wave">👋</span></h1>
+          <h1>Hello<br />! <span class="wave">👋</span></h1>
           
           <p class="sub-text">
-            Skip repetitive and manual sales-marketing tasks. Get highly productive through automation and save tons of time!
+            Welcome to my Budget Management System!
           </p>
         </div>
 
         <!-- Copyright -->
         <div class="copyright">
-          © 2022 SaleSkip. All rights reserved.
+          © 2022 buget system. All rights reserved.
         </div>
       </div>
     </div>
@@ -29,7 +29,7 @@
     <div class="right-panel">
       <div class="form-container">
         
-        <h2 class="brand-logo">SaleSkip</h2>
+        <h2 class="brand-logo">Budget</h2>
 
         <div class="welcome-header">
           <h3>Welcome Back!</h3>
@@ -84,15 +84,71 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore'; // Adjust path to your store
+import { useToast } from 'primevue/usetoast'; // Requires ToastService in main.js
+
+// Components
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
+import Toast from 'primevue/toast';
 
+// Setup Hooks
+const router = useRouter();
+const authStore = useAuthStore();
+const toast = useToast();
+
+// State
 const email = ref('');
 const password = ref('');
+const errorMessage = ref('');
 
-const handleLogin = () => {
-  console.log('Logging in with:', email.value, password.value);
+// --- Action: Email/Password Login ---
+const handleLogin = async () => {
+  // Reset previous errors
+  errorMessage.value = '';
+
+  if (!email.value || !password.value) {
+    errorMessage.value = 'Please enter both email and password.';
+    return;
+  }
+
+  try {
+    await authStore.signIn(email.value, password.value);
+    
+    // Success feedback
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Logged in successfully', life: 3000 });
+    
+    // Redirect to Dashboard
+    router.push({ name: 'Dashboard' }); // Ensure you have a route named 'Dashboard' or path '/dashboard'
+
+  } catch (error) {
+    // Error Handling
+    errorMessage.value = 'Invalid email or password.'; // Generic message for user
+    
+    toast.add({ 
+      severity: 'error', 
+      summary: 'Login Failed', 
+      detail: error.message || 'An error occurred', 
+      life: 4000 
+    });
+  }
+};
+
+// --- Action: Google Login ---
+const handleGoogleLogin = async () => {
+  try {
+    await authStore.signInWithGoogle();
+    // No redirect code needed here usually, as Supabase redirects the browser window
+  } catch (error) {
+    toast.add({ 
+      severity: 'error', 
+      summary: 'Google Login Failed', 
+      detail: error.message, 
+      life: 4000 
+    });
+  }
 };
 </script>
 
