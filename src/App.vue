@@ -1,15 +1,10 @@
-<template>
-  <router-view />
-  <Toast />
-  <ConfirmDialog />
-</template>
-
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 
+// We do NOT define routes here. We just use the store.
 const authStore = useAuthStore();
 
 onMounted(async () => {
@@ -18,7 +13,17 @@ onMounted(async () => {
 });
 </script>
 
+<template>
+  <!-- This renders the component matching the URL -->
+  <router-view />
+  
+  <!-- Global Overlays -->
+  <Toast />
+  <ConfirmDialog />
+</template>
+
 <style>
+/* Global Styles */
 * {
   margin: 0;
   padding: 0;

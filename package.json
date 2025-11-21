@@ -16,6 +16,7 @@
   "dependencies": {
     "@primevue/themes": "^4.4.1",
     "@supabase/supabase-js": "^2.81.1",
+    "chart.js": "^4.5.1",
     "pinia": "^3.0.3",
     "primeicons": "^7.0.0",
     "primevue": "^4.4.1",
