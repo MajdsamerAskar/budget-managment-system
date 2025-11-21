@@ -35,8 +35,8 @@
           <h3>Welcome Back!</h3>
           <p>
             Don't have an account? 
-            <a href="#">Create a new account now</a>, 
-            it's FREE! Takes less than a minute.
+            <router-link to="/register">Create your account</router-link>.
+            ,it's FREE! Takes less than a minute.
           </p>
         </div>
 
@@ -90,7 +90,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/authStore'; // Adjust path to your store
+import { useAuthStore } from '@/stores/authStore'; 
 import { useToast } from 'primevue/usetoast'; // Requires ToastService in main.js
 
 // Components
