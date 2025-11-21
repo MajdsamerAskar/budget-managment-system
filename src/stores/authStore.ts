@@ -99,6 +99,28 @@ export const useAuthStore = defineStore('auth', () => {
       error.value = err.message;
     }
   };
+  const signInWithGoogle = async () => {
+    try {
+      isLoading.value = true;
+      error.value = null;
+      
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          // Redirect back to this page or your dashboard after Google auth
+          redirectTo: window.location.origin 
+        }
+      });
+
+      if (authError) throw authError;
+      
+    } catch (err: any) {
+      error.value = err.message;
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  };
 
   return {
     // State
@@ -113,6 +135,7 @@ export const useAuthStore = defineStore('auth', () => {
     signUp,
     signIn,
     signOut,
-    fetchUser
+    fetchUser,
+    signInWithGoogle 
   };
 });
