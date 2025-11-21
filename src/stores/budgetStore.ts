@@ -1,14 +1,12 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { supabase } from '@/lib/supabase';
-import type { Budget, Category } from '@/types/types';
+import type { Budget } from '@/types/types';
 
-export interface BudgetWithCategory extends Budget {
-  category?: Category;
-}
+
 
 export const useBudgetStore = defineStore('budget', () => {
-  const budgets = ref<BudgetWithCategory[]>([]);
+  const budgets = ref<Budget[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
@@ -47,11 +45,11 @@ export const useBudgetStore = defineStore('budget', () => {
     return allocated > 0 ? Math.round((spent / allocated) * 100) : 0;
   };
 
-  const getBudgetById = (id: string): BudgetWithCategory | undefined => {
+  const getBudgetById = (id: string): Budget | undefined => {
     return budgets.value.find(b => b.id === id);
   };
 
-  const getBudgetsByCategory = (categoryId: string): BudgetWithCategory[] => {
+  const getBudgetsByCategory = (categoryId: string): Budget[] => {
     return budgets.value.filter(b => b.category_id === categoryId);
   };
 
@@ -61,14 +59,6 @@ export const useBudgetStore = defineStore('budget', () => {
     if (percentage >= 80) return 'warning';
     return 'safe';
   };
-
-
-
-
-
-
-
-
 
   //actions functions
   const fetchBudgets = async () => {
@@ -165,12 +155,30 @@ export const useBudgetStore = defineStore('budget', () => {
   };
 
   return {
+    // State
     budgets,
     isLoading,
     error,
+    
+    // Actions
     fetchBudgets,
     addBudget,
     updateBudget,
-    deleteBudget
+    deleteBudget,
+
+   
+    // Computed (Getters)
+    totalAllocated,
+    totalSpent,
+    totalRemaining,
+    activeBudgets,
+    expiredBudgets,
+    overBudgetItems,
+    
+    // Helper Functions
+    getPercentage,
+    getBudgetById,
+    getBudgetsByCategory,
+    getBudgetStatus
   };
 });
