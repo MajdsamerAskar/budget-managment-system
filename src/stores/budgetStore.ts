@@ -1,13 +1,76 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { supabase } from '@/lib/supabase';
-import type { Budget } from '@/types';
+import type { Budget, Category } from '@/types/types';
+
+export interface BudgetWithCategory extends Budget {
+  category?: Category;
+}
 
 export const useBudgetStore = defineStore('budget', () => {
-  const budgets = ref<Budget[]>([]);
+  const budgets = ref<BudgetWithCategory[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
+ //getters functions 
+
+  const totalAllocated = computed(() =>
+    budgets.value.reduce((sum, b) => sum + b.total_amount, 0)
+  );
+
+  const totalSpent = computed(() =>
+    budgets.value.reduce((sum, b) => sum + b.spent, 0)
+  );
+
+  const totalRemaining = computed(() =>
+    totalAllocated.value - totalSpent.value
+  );
+
+  const activeBudgets = computed(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return budgets.value.filter(
+      b => b.start_date <= today && b.end_date >= today
+    );
+  });
+
+  const expiredBudgets = computed(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return budgets.value.filter(b => b.end_date < today);
+  });
+
+  const overBudgetItems = computed(() =>
+    budgets.value.filter(b => b.spent > b.total_amount)
+  );
+  //helper functions
+  
+  const getPercentage = (spent: number, allocated: number): number => {
+    return allocated > 0 ? Math.round((spent / allocated) * 100) : 0;
+  };
+
+  const getBudgetById = (id: string): BudgetWithCategory | undefined => {
+    return budgets.value.find(b => b.id === id);
+  };
+
+  const getBudgetsByCategory = (categoryId: string): BudgetWithCategory[] => {
+    return budgets.value.filter(b => b.category_id === categoryId);
+  };
+
+  const getBudgetStatus = (budget: Budget): 'safe' | 'warning' | 'danger' => {
+    const percentage = getPercentage(budget.spent, budget.total_amount);
+    if (percentage >= 100) return 'danger';
+    if (percentage >= 80) return 'warning';
+    return 'safe';
+  };
+
+
+
+
+
+
+
+
+
+  //actions functions
   const fetchBudgets = async () => {
     try {
       isLoading.value = true;
@@ -27,14 +90,17 @@ export const useBudgetStore = defineStore('budget', () => {
     }
   };
 
-  const addBudget = async (budget: Omit<Budget, 'id' | 'created_at' | 'spent'>) => {
+  const addBudget = async (budget: Omit<Budget, 'id' | 'created_at' | 'spent' | 'user_id'>) => {
     try {
       isLoading.value = true;
       error.value = null;
 
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
       const { data, error: insertError } = await supabase
         .from('budgets')
-        .insert({ ...budget, spent: 0 })
+        .insert({ ...budget, spent: 0, user_id: user.id })
         .select()
         .single();
 
@@ -50,7 +116,7 @@ export const useBudgetStore = defineStore('budget', () => {
     }
   };
 
-  const updateBudget = async (id: string, updates: Partial<Budget>) => {
+  const updateBudget = async (id: string, updates: Partial<Omit<Budget, 'id' | 'user_id' | 'created_at'>>) => {
     try {
       isLoading.value = true;
       error.value = null;
