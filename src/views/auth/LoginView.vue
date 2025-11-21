@@ -35,8 +35,8 @@
           <h3>Welcome Back!</h3>
           <p>
             Don't have an account? 
-            <router-link to="/register">Create your account</router-link>.
-            ,it's FREE! Takes less than a minute.
+            <router-link to="/register">Create your account</router-link>
+          , it's FREE! Takes less than a minute.
           </p>
         </div>
 
@@ -130,7 +130,7 @@ const handleLogin = async () => {
 
   } catch (error) {
     // Error Handling
-    errorMessage.value = 'Invalid email or password.'; // Generic message for user
+    errorMessage.value = 'Invalid email or password.'; 
     
     toast.add({ 
       severity: 'error', 
