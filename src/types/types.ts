@@ -1,49 +1,55 @@
 export interface User {
-  id: number;
-  name: string;
+  id: string;
   email: string;
-  password: string;
-  registrationDate: string;
+  created_at: string;
 }
 
 export interface Account {
-  id: number;
-  userId: number;
-  accountName: string;
+  id: string;
+  user_id: string;
+  account_name: string;
   type: "Bank" | "Wallet" | "Credit";
   balance: number;
-  createdAt: string;
+  created_at: string;
 }
 
 export interface Category {
-  id: number;
-  userId: number;
+  id: string;
+  user_id: string;
   name: string;
   type: "Income" | "Expense";
   description?: string;
+  color?: string;
+  icon?: string;
+  created_at: string;
 }
 
 export interface Budget {
-  id: number;
-  userId: number;
+  id: string;
+  user_id: string;
+  category_id: string;
   name: string;
-  totalAmount: number;
-  startDate: string;
-  endDate: string;
+  total_amount: number;
+  spent: number;
+  start_date: string;
+  end_date: string;
+  created_at: string;
 }
 
 export interface Transaction {
-  id: number;
-  accountId: number;
-  categoryId: number;
-  paymentMethodId: number;
+  id: string;
+  user_id: string;
+  account_id: string;
+  category_id: string;
+  payment_method_id: string;
   amount: number;
-  transactionType: "Income" | "Expense";
+  transaction_type: "Income" | "Expense";
   date: string;
   description?: string;
-}
-export interface PaymentMethod {
-  id: number;
-  methodName: string;
+  created_at: string;
 }
 
+export interface PaymentMethod {
+  id: string;
+  method_name: string;
+}
