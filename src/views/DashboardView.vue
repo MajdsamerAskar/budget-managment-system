@@ -51,7 +51,7 @@ onMounted(() => {
         <h3>Quick Actions</h3>
         <div class="action-buttons">
           <Button label="Add Transaction" icon="pi pi-plus" class="p-button-primary w-full" />
-          <Button label="Add Budget" icon="pi pi-chart-pie" class="p-button-success w-full" />
+          <Button label="Add Budget" @click="$router.push('/budgets')" icon="pi pi-chart-pie" class="p-button-success w-full" />
           <Button label="View Reports" icon="pi pi-file" class="p-button-help w-full" />
           <Button label="Manage Accounts" icon="pi pi-home" class="p-button-warning w-full" />
         </div>
