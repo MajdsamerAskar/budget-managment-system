@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
+import { useAuthStore } from '@/stores/authStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,15 +23,16 @@ const router = createRouter({
   ]
 })
 
-
-import { useAuthStore } from '@/stores/authStore'
-
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   
-  // Check if the route requires auth
+
+  if (!authStore.user) {
+    await authStore.fetchUser() 
+  }
+
+  // 2. Now check authentication
   if (to.meta.requiresAuth && !authStore.user) {
-    // If not logged in, redirect to Login
     next({ name: 'Login' })
   } else {
     next()

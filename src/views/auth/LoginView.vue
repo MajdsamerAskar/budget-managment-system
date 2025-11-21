@@ -145,7 +145,7 @@ const handleLogin = async () => {
 const handleGoogleLogin = async () => {
   try {
     await authStore.signInWithGoogle();
-    // No redirect code needed here usually, as Supabase redirects the browser window
+
   } catch (error) {
     toast.add({ 
       severity: 'error', 
