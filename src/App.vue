@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
+import { useRoute } from 'vue-router';
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 import AppSidebar from '@/components/layout/AppSidebar.vue';
 
 const authStore = useAuthStore();
+const route = useRoute();
+
+// Check if current route should show sidebar
+const showSidebar = computed(() => {
+  const publicRoutes = ['/login', '/register'];
+  return !publicRoutes.includes(route.path);
+});
 
 onMounted(async () => {
   await authStore.fetchUser();
@@ -13,9 +21,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="app-layout">
-    <!-- Sidebar -->
-    <aside class="app-sidebar">
+  <div class="app-layout" :class="{ 'no-sidebar': !showSidebar }">
+    <!-- Sidebar (only show on authenticated pages) -->
+    <aside v-if="showSidebar" class="app-sidebar">
       <AppSidebar />
     </aside>
 
@@ -74,5 +82,10 @@ body {
   overflow: auto;
   background-color: var(--surface-50);
   height: 100vh;
+}
+
+/* Full width main content when no sidebar */
+.app-layout.no-sidebar .app-main {
+  width: 100vw;
 }
 </style>
