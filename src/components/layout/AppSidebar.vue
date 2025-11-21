@@ -2,7 +2,7 @@
   <div class="sidebar-container">
     <!-- Logo -->
     <div class="sidebar-header">
-      <h2>MyBudgetApp</h2>
+      <h2>BMS</h2>
     </div>
 
     <!-- Menu -->

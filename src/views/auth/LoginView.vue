@@ -29,7 +29,7 @@
     <div class="right-panel">
       <div class="form-container">
         
-        <h2 class="brand-logo">Budget</h2>
+        <h2 class="brand-logo"></h2>
 
         <div class="welcome-header">
           <h3>Welcome Back!</h3>
