@@ -1,7 +1,8 @@
 <script setup>
-import { onMounted } from 'vue';
-import { useTransactionStore } from '@/stores/transactionStore'; // Assuming you have this
+import { onMounted, computed } from 'vue';
+import { useTransactionStore } from '@/stores/transactionStore';
 import { useBudgetStore } from '@/stores/budgetStore';
+import { useAccountStore } from '@/stores/accountStore';
 
 // Components
 import StatsCard from '@/components/dashboard/StatsCard.vue';
@@ -12,10 +13,25 @@ import Button from 'primevue/button';
 
 const transactionStore = useTransactionStore();
 const budgetStore = useBudgetStore();
+const accountStore = useAccountStore();
+
+// Format currency helper
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  }).format(value);
+};
+
+// Reactive computed values
+const totalBalance = computed(() => 
+  accountStore.accounts.reduce((sum, a) => sum + (a.balance || 0), 0)
+);
 
 onMounted(() => {
   transactionStore.fetchTransactions();
   budgetStore.fetchBudgets();
+  accountStore.fetchAccounts();
 });
 </script>
 
@@ -31,22 +47,43 @@ onMounted(() => {
       <Button label="Add Transaction" icon="pi pi-plus" />
     </div>
 
-    <!-- 2. STATS CARDS ROW -->
+    <!-- 2. STATS CARDS ROW - NOW REACTIVE! -->
     <div class="stats-grid">
-      <StatsCard title="Total Balance" amount="$12,847.50" icon="pi pi-wallet" color="text-green-500" bg="bg-green-100" />
-      <StatsCard title="Income" amount="$4,250.00" icon="pi pi-arrow-up" color="text-emerald-500" bg="bg-emerald-100" />
-      <StatsCard title="Expenses" amount="$2,890.75" icon="pi pi-arrow-down" color="text-red-500" bg="bg-red-100" />
-      <StatsCard title="Net Savings" amount="$1,359.25" icon="pi pi-star-fill" color="text-blue-500" bg="bg-blue-100" />
+      <StatsCard 
+        title="Total Balance" 
+        :amount="formatCurrency(totalBalance)" 
+        icon="pi pi-wallet" 
+        color="text-green-500" 
+        bg="bg-green-100" 
+      />
+      <StatsCard 
+        title="Income" 
+        :amount="formatCurrency(transactionStore.totalIncome)" 
+        icon="pi pi-arrow-up" 
+        color="text-emerald-500" 
+        bg="bg-emerald-100" 
+      />
+      <StatsCard 
+        title="Expenses" 
+        :amount="formatCurrency(transactionStore.totalExpenses)" 
+        icon="pi pi-arrow-down" 
+        color="text-red-500" 
+        bg="bg-red-100" 
+      />
+      <StatsCard 
+        title="Net Savings" 
+        :amount="formatCurrency(transactionStore.netSavings)" 
+        icon="pi pi-star-fill" 
+        color="text-blue-500" 
+        bg="bg-blue-100" 
+      />
     </div>
 
-    <!-- 3. MIDDLE SECTION: Budget & Quick Actions -->
+    <!-- Rest stays the same... -->
     <div class="middle-grid">
-      <!-- Left: Budget Progress -->
       <div class="card-panel">
         <BudgetProgress />
       </div>
-
-      <!-- Right: Quick Actions -->
       <div class="card-panel quick-actions">
         <h3>Quick Actions</h3>
         <div class="action-buttons">
@@ -57,7 +94,6 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- 4. BOTTOM SECTION: Transactions & Chart -->
     <div class="bottom-grid">
       <div class="card-panel">
         <RecentTransactions />
