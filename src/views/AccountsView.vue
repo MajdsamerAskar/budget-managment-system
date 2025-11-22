@@ -2,8 +2,21 @@
   <div class="accounts-view">
     <AccountsHeader @add-account="openAddDialog" />
     
+    <div v-if="accountStore.isLoading" class="loading-container">
+      <ProgressSpinner />
+      <p>Loading accounts...</p>
+    </div>
+
+    <div v-else-if="accountStore.error" class="error-container">
+      <Message severity="error" :closable="false">
+        {{ accountStore.error }}
+      </Message>
+      <Button label="Retry" icon="pi pi-refresh" @click="accountStore.fetchAccounts()" />
+    </div>
+
     <AccountsGrid 
-      :accounts="accounts"
+      v-else
+      :accounts="accountStore.accounts"
       @edit-account="handleEditAccount"
       @delete-account="handleDeleteAccount"
     />
@@ -12,6 +25,7 @@
       v-model:visible="showDialog"
       :edit-mode="editMode"
       :form-data="formData"
+      :saving="saving"
       @save="handleSaveAccount"
       @close="handleCloseDialog"
     />
@@ -19,38 +33,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import ProgressSpinner from 'primevue/progressspinner';
+import Message from 'primevue/message';
+import Button from 'primevue/button';
 import AccountsHeader from '@/components/accounts/AccountsHeader.vue';
 import AccountsGrid from '@/components/accounts/AccountsGrid.vue';
 import AccountDialog from '@/components/accounts/AccountsDialog.vue';
+import { useAccountStore } from '@/stores/accountStore';
+import { useAuthStore } from '@/stores/authStore';
 import type { Account } from '@/types/types';
 
-const accounts = ref<Account[]>([
-  {
-    id: '1',
-    user_id: 'user_123',
-    account_name: 'Main Checking',
-    type: 'Bank',
-    balance: 2500.00,
-    created_at: new Date().toISOString()
-  },
-  {
-    id: '2',
-    user_id: 'user_123',
-    account_name: 'Main Wallet',
-    type: 'Wallet',
-    balance: 500.00,
-    created_at: new Date().toISOString()
-  },
-  {
-    id: '3',
-    user_id: 'user_123',
-    account_name: 'Credit Card',
-    type: 'Credit',
-    balance: -450.00,
-    created_at: new Date().toISOString()
-  }
-]);
+const toast = useToast();
+const accountStore = useAccountStore();
+const authStore = useAuthStore();
+const saving = ref(false);
 
 const showDialog = ref(false);
 const editMode = ref(false);
@@ -84,47 +82,106 @@ const handleEditAccount = (account: Account) => {
   showDialog.value = true;
 };
 
-const handleDeleteAccount = (id: string) => {
-  if (confirm('Are you sure you want to delete this account?')) {
-    accounts.value = accounts.value.filter(acc => acc.id !== id);
-  }
-};
-
-const handleSaveAccount = () => {
-  // Validate form data
-  if (!formData.value.account_name.trim() || !formData.value.type) {
-    console.log('Form validation failed', formData.value);
+const handleDeleteAccount = async (id: string) => {
+  if (!confirm('Are you sure you want to delete this account?')) {
     return;
   }
 
-  if (editMode.value && editingId.value !== null) {
-    // Update existing account
-    const index = accounts.value.findIndex(acc => acc.id === editingId.value);
-    if (index !== -1) {
-      accounts.value[index] = {
-        ...accounts.value[index],
+  try {
+    await accountStore.deleteAccount(id);
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Account deleted successfully',
+      life: 3000
+    });
+  } catch (err: any) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: accountStore.error || 'Failed to delete account',
+      life: 3000
+    });
+  }
+};
+
+const handleSaveAccount = async () => {
+  // Validate form data
+  if (!formData.value.account_name.trim() || !formData.value.type) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Validation Error',
+      detail: 'Please fill in all required fields',
+      life: 3000
+    });
+    return;
+  }
+
+  console.log('Saving account with data:', formData.value);
+  saving.value = true;
+
+  try {
+    if (editMode.value && editingId.value !== null) {
+      // Update existing account
+      console.log('Updating account:', editingId.value);
+      await accountStore.updateAccount(editingId.value, {
+        account_name: formData.value.account_name,
+        type: formData.value.type as "Bank" | "Wallet" | "Credit",
+        balance: formData.value.balance
+      });
+
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Account updated successfully',
+        life: 3000
+      });
+    } else {
+      // Create new account
+      console.log('Creating new account');
+      
+      // Get user ID from auth store
+      const userId = authStore.user?.id;
+      if (!userId) {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'User not authenticated',
+          life: 3000
+        });
+        return;
+      }
+      
+      const newAccountData = {
+        user_id: userId,
         account_name: formData.value.account_name,
         type: formData.value.type as "Bank" | "Wallet" | "Credit",
         balance: formData.value.balance
       };
-    }
-    console.log('Account updated', accounts.value);
-  } else {
-    // Add new account
-    const newAccount: Account = {
-      id: Date.now().toString(),
-      user_id: 'user_123', // This should come from auth store
-      account_name: formData.value.account_name,
-      type: formData.value.type as "Bank" | "Wallet" | "Credit",
-      balance: formData.value.balance,
-      created_at: new Date().toISOString()
-    };
-    accounts.value.push(newAccount);
-    console.log('New account added', newAccount);
-    console.log('All accounts', accounts.value);
-  }
+      console.log('New account data:', newAccountData);
+      
+      await accountStore.addAccount(newAccountData);
 
-  handleCloseDialog();
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Account created successfully',
+        life: 3000
+      });
+    }
+
+    handleCloseDialog();
+  } catch (err: any) {
+    console.error('Error saving account:', err);
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: accountStore.error || 'Failed to save account',
+      life: 3000
+    });
+  } finally {
+    saving.value = false;
+  }
 };
 
 const handleCloseDialog = () => {
@@ -137,6 +194,11 @@ const handleCloseDialog = () => {
     balance: 0
   };
 };
+
+// Load accounts on component mount
+onMounted(() => {
+  accountStore.fetchAccounts();
+});
 </script>
 
 <style scoped>
@@ -144,6 +206,28 @@ const handleCloseDialog = () => {
   padding: 2rem;
   min-height: 100vh;
   background-color: var(--surface-50);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1rem;
+}
+
+.loading-container p {
+  color: var(--surface-600);
+  font-size: 1.1rem;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
 }
 
 @media (max-width: 768px) {
