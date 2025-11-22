@@ -50,11 +50,13 @@
         @click="handleClose"
         text
         severity="secondary"
+        :disabled="isSubmitting"
       />
       <Button 
         :label="editMode ? 'Update' : 'Create'" 
         @click="handleSave"
         :disabled="!isFormValid"
+        :loading="isSubmitting"
       />
     </template>
   </Dialog>
@@ -71,6 +73,7 @@ import Dropdown from 'primevue/dropdown';
 const props = defineProps<{
   visible: boolean
   editMode: boolean
+  isSubmitting?: boolean
   formData: {
     account_name: string
     type: '' | 'Bank' | 'Wallet' | 'Credit'
@@ -120,5 +123,9 @@ const handleClose = () => {
   font-weight: 600;
   color: var(--surface-700);
   font-size: 0.9rem;
+}
+
+.w-full {
+  width: 100%;
 }
 </style>

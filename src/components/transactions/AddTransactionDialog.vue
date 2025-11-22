@@ -25,7 +25,7 @@ const accountStore = useAccountStore();
 const toast = useToast();
 
 const formData = ref({
-  type: 'expense',
+  transaction_type: 'Expense',
   description: '',
   amount: null,
   category_id: null,
@@ -37,8 +37,8 @@ const formData = ref({
 const isSubmitting = ref(false);
 
 const typeOptions = [
-  { label: 'Income', value: 'income' },
-  { label: 'Expense', value: 'expense' }
+  { label: 'Income', value: 'Income' },
+  { label: 'Expense', value: 'Expense' }
 ];
 
 const categoryOptions = computed(() => 
@@ -50,10 +50,20 @@ const categoryOptions = computed(() =>
 
 const accountOptions = computed(() => 
   accountStore.accounts.map(acc => ({
-    label: acc.name,
-    value: acc.id
+    label: `${acc.account_name} - ${acc.balance.toFixed(2)}`,
+    value: acc.id,
+    icon: getAccountIcon(acc.type)
   }))
 );
+
+const getAccountIcon = (type) => {
+  switch(type) {
+    case 'Bank': return 'pi pi-building';
+    case 'Wallet': return 'pi pi-wallet';
+    case 'Credit': return 'pi pi-credit-card';
+    default: return 'pi pi-wallet';
+  }
+};
 
 const closeDialog = () => {
   emit('update:visible', false);
@@ -62,7 +72,7 @@ const closeDialog = () => {
 
 const resetForm = () => {
   formData.value = {
-    type: 'expense',
+    transaction_type: 'Expense',
     description: '',
     amount: null,
     category_id: null,
@@ -84,12 +94,22 @@ const handleSubmit = async () => {
 
     // Validation
     if (!formData.value.description || !formData.value.amount || 
-        !formData.value.category_id || !formData.value.account_id || 
-        !formData.value.date) {
+        !formData.value.account_id || !formData.value.date) {
       toast.add({
         severity: 'warn',
         summary: 'Validation Error',
         detail: 'Please fill in all required fields',
+        life: 3000
+      });
+      return;
+    }
+
+    // Validate category only for expenses
+    if (formData.value.transaction_type === 'Expense' && !formData.value.category_id) {
+      toast.add({
+        severity: 'warn',
+        summary: 'Validation Error',
+        detail: 'Please select a category for expenses',
         life: 3000
       });
       return;
@@ -107,10 +127,10 @@ const handleSubmit = async () => {
 
     // Submit to store
     await transactionStore.addTransaction({
-      type: formData.value.type,
+      transaction_type: formData.value.transaction_type,
       description: formData.value.description,
       amount: formData.value.amount,
-      category_id: formData.value.category_id,
+      category_id: formData.value.transaction_type === 'Expense' ? formData.value.category_id : null,
       account_id: formData.value.account_id,
       date: formatDateForDB(formData.value.date),
       notes: formData.value.notes || null
@@ -151,7 +171,7 @@ const handleSubmit = async () => {
       <div class="field">
         <label>Transaction Type *</label>
         <SelectButton 
-          v-model="formData.type" 
+          v-model="formData.transaction_type" 
           :options="typeOptions" 
           optionLabel="label" 
           optionValue="value"
@@ -181,7 +201,7 @@ const handleSubmit = async () => {
         />
       </div>
 
-      <div class="field">
+      <div class="field" v-if="formData.transaction_type === 'Expense'">
         <label for="category">Category *</label>
         <Dropdown
           id="category"
@@ -204,7 +224,21 @@ const handleSubmit = async () => {
           optionValue="value"
           placeholder="Select an account"
           class="w-full"
-        />
+        >
+          <template #value="slotProps">
+            <div v-if="slotProps.value" class="account-dropdown-value">
+              <i :class="accountOptions.find(a => a.value === slotProps.value)?.icon"></i>
+              <span>{{ accountOptions.find(a => a.value === slotProps.value)?.label }}</span>
+            </div>
+            <span v-else>{{ slotProps.placeholder }}</span>
+          </template>
+          <template #option="slotProps">
+            <div class="account-dropdown-option">
+              <i :class="slotProps.option.icon"></i>
+              <span>{{ slotProps.option.label }}</span>
+            </div>
+          </template>
+        </Dropdown>
       </div>
 
       <div class="field">

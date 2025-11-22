@@ -1,4 +1,3 @@
-<!-- TransactionsView.vue -->
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { useTransactionStore } from '@/stores/transactionStore';
