@@ -1,12 +1,28 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { supabase } from '@/lib/supabase';
 import type { Transaction } from '@/types/types';
 
 export const useTransactionStore = defineStore('transaction', () => {
+  //state
   const transactions = ref<Transaction[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
+  //getters
+  const totalIncome = computed(() =>
+  transactions.value
+    .filter(t => t.transaction_type === 'Income')
+    .reduce((sum, t) => sum + t.amount, 0)
+);
+
+const totalExpenses = computed(() =>
+  transactions.value
+    .filter(t => t.transaction_type === 'Expense')
+    .reduce((sum, t) => sum + t.amount, 0)
+);
+
+const netSavings = computed(() => totalIncome.value - totalExpenses.value);
+  //actions
 
   const fetchTransactions = async () => {
     try {
@@ -99,9 +115,15 @@ export const useTransactionStore = defineStore('transaction', () => {
   };
 
   return {
+    //state
     transactions,
     isLoading,
     error,
+    //getters
+    totalIncome,
+    totalExpenses,
+    netSavings,
+    //actions
     fetchTransactions,
     addTransaction,
     updateTransaction,
