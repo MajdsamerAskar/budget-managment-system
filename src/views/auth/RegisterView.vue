@@ -22,7 +22,7 @@
 
         <!-- Copyright -->
         <div class="copyright">
-          © 2022 buget system. All rights reserved.
+          © 2025 Budget Managment System. All rights reserved.
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
     <div class="right-panel">
       <div class="form-container">
         
-        <h2 class="brand-logo">Budget</h2>
+        <h1>BUDGET PRO</h1>
 
         <div class="welcome-header">
           <h3>Create Account</h3>
