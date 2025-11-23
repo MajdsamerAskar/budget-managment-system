@@ -9,26 +9,6 @@ import Button from 'primevue/button';
 const transactionStore = useTransactionStore();
 const categoryStore = useCategoryStore();
 
-const filters = ref({
-  type: null,
-  category: null,
-  dateRange: null
-});
-
-const typeOptions = [
-  { label: 'All Types', value: null },
-  { label: 'Income', value: 'Income' },
-  { label: 'Expense', value: 'Expense' }
-];
-
-const categoryOptions = computed(() => [
-  { label: 'All Categories', value: null },
-  ...categoryStore.categories.map(cat => ({
-    label: cat.name,
-    value: cat.id
-  }))
-]);
-
 // Quick stats computed
 const thisMonthTotal = computed(() => {
   const now = new Date();
@@ -73,66 +53,11 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
-const applyFilters = () => {
-  // TODO: Emit filters to parent or update store
-  console.log('Applying filters:', filters.value);
-  // You can emit this to parent component to filter the DataTable
-};
 
-const clearFilters = () => {
-  filters.value = {
-    type: null,
-    category: null,
-    dateRange: null
-  };
-};
+
 </script>
 
 <template>
-  <div class="transaction-filters">
-    <h3>Filters</h3>
-    
-    <div class="filter-group">
-      <label>Transaction Type</label>
-      <Dropdown
-        v-model="filters.type"
-        :options="typeOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="All Types"
-        class="w-full"
-      />
-    </div>
-
-    <div class="filter-group">
-      <label>Category</label>
-      <Dropdown
-        v-model="filters.category"
-        :options="categoryOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="All Categories"
-        class="w-full"
-      />
-    </div>
-
-    <div class="filter-group">
-      <label>Date Range</label>
-      <Calendar
-        v-model="filters.dateRange"
-        selectionMode="range"
-        dateFormat="yy-mm-dd"
-        placeholder="Select date range"
-        class="w-full"
-        showIcon
-      />
-    </div>
-
-    <div class="filter-actions">
-      <Button label="Apply" icon="pi pi-check" class="w-full" @click="applyFilters" />
-      <Button label="Clear" icon="pi pi-times" class="w-full" outlined @click="clearFilters" />
-    </div>
-
     <div class="quick-stats">
       <h4>Quick Stats</h4>
       <div class="stat-item">
@@ -154,7 +79,6 @@ const clearFilters = () => {
         </strong>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
@@ -184,7 +108,7 @@ const clearFilters = () => {
 }
 
 .quick-stats {
-  margin-top: 1.5rem;
+  margin-top: auto;
   padding-top: 1.5rem;
   border-top: 1px solid #e9ecef;
 }

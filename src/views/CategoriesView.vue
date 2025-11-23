@@ -1,6 +1,7 @@
 <template>
   <div class="categories-page">
-    <h2>Categories</h2>
+    <h1>Categories</h1>
+    <p class="text-secondary">Organize and manage your spending categories.</p>
 
     <!-- Stats Cards -->
     <div class="stats-grid">
@@ -25,7 +26,7 @@
       label="Add Category" 
       icon="pi pi-plus" 
       @click="categoryDialog?.open()" 
-      class="mb-3"
+      class="mb-3 addCategory"
     />
 
     <!-- Categories Table -->
@@ -276,5 +277,11 @@ const chartOptions = {
   height: 24px;
   border-radius: 4px;
   border: 1px solid #ddd;
+}
+.addCategory {
+  margin-bottom: 20px;
+}
+.text-secondary {
+  margin-bottom: 2rem;
 }
 </style>

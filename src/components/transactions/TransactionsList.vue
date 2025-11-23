@@ -2,6 +2,8 @@
 import { useTransactionStore } from '@/stores/transactionStore';
 import { useCategoryStore } from '@/stores/categoryStore';
 import { useAccountStore } from '@/stores/accountStore';
+import { useToast } from 'primevue/usetoast'; // Add this import
+
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -12,6 +14,7 @@ const emit = defineEmits(['edit', 'delete']);
 const transactionStore = useTransactionStore();
 const categoryStore = useCategoryStore();
 const accountStore = useAccountStore();
+const toast = useToast(); // Add this with your other constants
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {
@@ -43,6 +46,80 @@ const getAccountName = (accountId) => {
   const account = accountStore.accounts.find(a => a.id === accountId);
   return account?.account_name || 'N/A';
 };
+const handleExportData = () => {
+  try {
+    // Get all transactions
+    const transactions = transactionStore.transactions;
+
+    if (!transactions || transactions.length === 0) {
+      toast.add({
+        severity: 'warn',
+        summary: 'No Data',
+        detail: 'No transactions available to export',
+        life: 3000
+      });
+      return;
+    }
+
+    // Prepare CSV data
+    const headers = ['Date', 'Description', 'Category', 'Type', 'Amount', 'Account'];
+    
+    const csvRows = [
+      headers.join(','), // Header row
+      ...transactions.map(transaction => {
+        const categoryName = getCategoryName(transaction.category_id);
+        const accountName = getAccountName(transaction.account_id);
+        
+        return [
+          `"${formatDate(transaction.date)}"`,
+          `"${transaction.description}"`,
+          `"${categoryName}"`,
+          transaction.transaction_type,
+          transaction.amount,
+          `"${accountName}"`
+        ].join(',');
+      })
+    ];
+
+    const csvContent = csvRows.join('\n');
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    // Generate filename with current date
+    const date = new Date().toISOString().split('T')[0];
+    const filename = `transactions_export_${date}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clean up
+    URL.revokeObjectURL(url);
+
+    toast.add({
+      severity: 'success',
+      summary: 'Export Successful',
+      detail: `Downloaded ${filename}`,
+      life: 3000
+    });
+
+  } catch (error) {
+    console.error('Export error:', error);
+    toast.add({
+      severity: 'error',
+      summary: 'Export Failed',
+      detail: 'Failed to export transactions data',
+      life: 3000
+    });
+  }
+};
 </script>
 
 <template>
@@ -50,7 +127,7 @@ const getAccountName = (accountId) => {
     <div class="section-header">
       <h3>All Transactions</h3>
       <div class="table-actions">
-        <Button label="Export" icon="pi pi-download" size="small" outlined />
+        <Button label="Export"  icon="pi pi-download" size="small" outlined @click="handleExportData" />
       </div>
     </div>
 

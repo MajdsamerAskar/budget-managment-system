@@ -2,7 +2,7 @@
   <div class="sidebar-container">
     <!-- Logo -->
     <div class="sidebar-header">
-      <h2>BMS</h2>
+      <h2>BUDGET PRO</h2>
     </div>
     <!-- Menu -->
     <Menu :model="menuItems" class="sidebar-menu">
@@ -101,6 +101,7 @@ const logout = async () => {
 .sidebar-header {
   padding: 1.5rem;
   border-bottom: 1px solid #e5e7eb;
+  align-items: center;
 }
 
 .sidebar-header h2 {
@@ -108,6 +109,7 @@ const logout = async () => {
   font-weight: 700;
   margin: 0;
   color: #333;
+  text-align: center;
 }
 
 .sidebar-menu {
@@ -143,10 +145,16 @@ const logout = async () => {
 .sidebar-footer {
   padding: 1rem;
   border-top: 1px solid #e5e7eb;
+  align-self: flex-start;
+  margin-top: auto;
+  width: 100%;
+  text-align: left;
 }
 
 .sidebar-footer :deep(.p-button) {
   color: #6b7280;
+  text-align: left;
+  align-self: start;
 }
 
 .sidebar-footer :deep(.p-button:hover) {
