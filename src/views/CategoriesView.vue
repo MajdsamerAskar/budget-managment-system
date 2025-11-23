@@ -22,13 +22,15 @@
     </div>
 
     <!-- Add Button -->
+     
+    <div class="button-container">
     <Button 
       label="Add Category" 
       icon="pi pi-plus" 
       @click="categoryDialog?.open()" 
       class="mb-3 addCategory"
     />
-
+      </div>
     <!-- Categories Table -->
     <DataTable 
       :value="categoriesWithTotals" 
@@ -229,7 +231,7 @@ const expenseChartData = computed(() => {
     labels: expenses.map(c => c.name),
     datasets: [{
       data: expenses.map(c => c.total),
-      backgroundColor: ['#f87171', '#fbbf24', '#60a5fa', '#a78bfa', '#f472b6']
+      backgroundColor: expenses.map(c => c.color ||'#fde68a')
     }]
   };
 });
@@ -240,7 +242,7 @@ const incomeChartData = computed(() => {
     labels: income.map(c => c.name),
     datasets: [{
       data: income.map(c => c.total),
-      backgroundColor: ['#34d399', '#10b981', '#22d3ee', '#fde68a']
+      backgroundColor: income.map(c => c.color ||'#fde68a')
     }]
   };
 });
@@ -279,9 +281,14 @@ const chartOptions = {
   border: 1px solid #ddd;
 }
 .addCategory {
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
+  align-items: flex-end;
 }
 .text-secondary {
   margin-bottom: 2rem;
+}
+.button-container {
+  display: flex;
+  justify-content: flex-end;
 }
 </style>
