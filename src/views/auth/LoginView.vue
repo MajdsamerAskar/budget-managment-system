@@ -14,13 +14,13 @@
           <h1>Hello<br />! <span class="wave">👋</span></h1>
           
           <p class="sub-text">
-            Welcome to my Budget Management System!
+            Welcome to My Budget Management System!
           </p>
         </div>
 
         <!-- Copyright -->
         <div class="copyright">
-          © 2022 buget system. All rights reserved.
+          © 2025 Budget Managment System. All rights reserved.
         </div>
       </div>
     </div>
@@ -28,7 +28,7 @@
     <!-- RIGHT PANEL: Form -->
     <div class="right-panel">
       <div class="form-container">
-        
+        <h1>BUDGET PRO</h1>
         <h2 class="brand-logo"></h2>
 
         <div class="welcome-header">
