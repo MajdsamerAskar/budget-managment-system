@@ -89,7 +89,7 @@ onMounted(() => {
         <div class="action-buttons">
           <Button label="Add Transaction" @click="$router.push('/transactions')" icon="pi pi-plus" class="p-button-primary w-full" />
           <Button label="Add Budget" @click="$router.push('/budgets')" icon="pi pi-chart-pie" class="p-button-success w-full" />
-          <Button label="Manage Accounts" icon="pi pi-home" class="p-button-danger w-full" />
+          <Button label="Manage Accounts"@click="$router.push('/accounts')" icon="pi pi-home" class="p-button-danger w-full" />
         </div>
       </div>
     </div>

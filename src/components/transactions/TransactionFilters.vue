@@ -17,8 +17,8 @@ const filters = ref({
 
 const typeOptions = [
   { label: 'All Types', value: null },
-  { label: 'Income', value: 'income' },
-  { label: 'Expense', value: 'expense' }
+  { label: 'Income', value: 'Income' },
+  { label: 'Expense', value: 'Expense' }
 ];
 
 const categoryOptions = computed(() => [
@@ -29,9 +29,54 @@ const categoryOptions = computed(() => [
   }))
 ]);
 
+// Quick stats computed
+const thisMonthTotal = computed(() => {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  
+  return transactionStore.transactions
+    .filter(t => {
+      const tDate = new Date(t.date);
+      return tDate >= startOfMonth && tDate <= endOfMonth;
+    })
+    .reduce((sum, t) => {
+      return t.transaction_type === 'Income' ? sum + t.amount : sum - t.amount;
+    }, 0);
+});
+
+const last7DaysTotal = computed(() => {
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  
+  return transactionStore.transactions
+    .filter(t => new Date(t.date) >= sevenDaysAgo)
+    .reduce((sum, t) => {
+      return t.transaction_type === 'Income' ? sum + t.amount : sum - t.amount;
+    }, 0);
+});
+
+const todayTotal = computed(() => {
+  const today = new Date().toISOString().split('T')[0];
+  
+  return transactionStore.transactions
+    .filter(t => t.date === today)
+    .reduce((sum, t) => {
+      return t.transaction_type === 'Income' ? sum + t.amount : sum - t.amount;
+    }, 0);
+});
+
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  }).format(amount);
+};
+
 const applyFilters = () => {
-  // Apply filters logic - you can emit or update store
+  // TODO: Emit filters to parent or update store
   console.log('Applying filters:', filters.value);
+  // You can emit this to parent component to filter the DataTable
 };
 
 const clearFilters = () => {
@@ -92,15 +137,21 @@ const clearFilters = () => {
       <h4>Quick Stats</h4>
       <div class="stat-item">
         <span>This Month</span>
-        <strong>$2,847.50</strong>
+        <strong :class="thisMonthTotal >= 0 ? 'text-green' : 'text-red'">
+          {{ formatCurrency(Math.abs(thisMonthTotal)) }}
+        </strong>
       </div>
       <div class="stat-item">
         <span>Last 7 Days</span>
-        <strong>$684.20</strong>
+        <strong :class="last7DaysTotal >= 0 ? 'text-green' : 'text-red'">
+          {{ formatCurrency(Math.abs(last7DaysTotal)) }}
+        </strong>
       </div>
       <div class="stat-item">
         <span>Today</span>
-        <strong>$125.00</strong>
+        <strong :class="todayTotal >= 0 ? 'text-green' : 'text-red'">
+          {{ formatCurrency(Math.abs(todayTotal)) }}
+        </strong>
       </div>
     </div>
   </div>
@@ -159,6 +210,14 @@ const clearFilters = () => {
 
 .stat-item strong {
   color: #212529;
+}
+
+.text-green {
+  color: #10b981;
+}
+
+.text-red {
+  color: #ef4444;
 }
 
 .w-full {

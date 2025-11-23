@@ -1,13 +1,17 @@
 <script setup>
 import { useTransactionStore } from '@/stores/transactionStore';
+import { useCategoryStore } from '@/stores/categoryStore';
+import { useAccountStore } from '@/stores/accountStore';
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
 
-const emit = defineEmits(['edit-transaction']);
+const emit = defineEmits(['edit', 'delete']);
 
 const transactionStore = useTransactionStore();
+const categoryStore = useCategoryStore();
+const accountStore = useAccountStore();
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {
@@ -17,7 +21,7 @@ const formatCurrency = (amount) => {
 };
 
 const getTypeSeverity = (type) => {
-  return type === 'income' ? 'success' : 'danger';
+  return type === 'Income' ? 'success' : 'danger';
 };
 
 const formatDate = (date) => {
@@ -28,14 +32,16 @@ const formatDate = (date) => {
   });
 };
 
-const handleEdit = (transaction) => {
-  emit('edit-transaction', transaction);
+// Get category name by ID
+const getCategoryName = (categoryId) => {
+  const category = categoryStore.categories.find(c => c.id === categoryId);
+  return category?.name || 'Uncategorized';
 };
 
-const handleDelete = async (id) => {
-  if (confirm('Are you sure you want to delete this transaction?')) {
-    await transactionStore.deleteTransaction(id);
-  }
+// Get account name by ID
+const getAccountName = (accountId) => {
+  const account = accountStore.accounts.find(a => a.id === accountId);
+  return account?.account_name || 'N/A';
 };
 </script>
 
@@ -65,32 +71,38 @@ const handleDelete = async (id) => {
           {{ formatDate(data.date) }}
         </template>
       </Column>
-      <Column field="description" header="Description" sortable></Column>
+      
+      <Column field="description" header="Description" sortable />
+      
       <Column field="category_id" header="Category">
         <template #body="{ data }">
-          <span class="category-badge">{{ data.category?.name || 'Uncategorized' }}</span>
+          <span class="category-badge">{{ getCategoryName(data.category_id) }}</span>
         </template>
       </Column>
-      <Column field="type" header="Type" sortable>
+      
+      <Column field="transaction_type" header="Type" sortable>
         <template #body="{ data }">
           <Tag 
-            :value="data.type" 
-            :severity="getTypeSeverity(data.type)"
+            :value="data.transaction_type" 
+            :severity="getTypeSeverity(data.transaction_type)"
           />
         </template>
       </Column>
+      
       <Column field="amount" header="Amount" sortable>
         <template #body="{ data }">
-          <span :class="data.type === 'income' ? 'amount-income' : 'amount-expense'">
-            {{ data.type === 'income' ? '+' : '-' }}{{ formatCurrency(data.amount) }}
+          <span :class="data.transaction_type === 'Income' ? 'amount-income' : 'amount-expense'">
+            {{ data.transaction_type === 'Income' ? '+' : '-' }}{{ formatCurrency(data.amount) }}
           </span>
         </template>
       </Column>
+      
       <Column field="account_id" header="Account">
         <template #body="{ data }">
-          {{ data.account?.name || 'N/A' }}
+          {{ getAccountName(data.account_id) }}
         </template>
       </Column>
+      
       <Column header="Actions" :exportable="false">
         <template #body="{ data }">
           <div class="action-buttons-row">
@@ -98,14 +110,14 @@ const handleDelete = async (id) => {
               icon="pi pi-pencil" 
               size="small" 
               text 
-              @click="handleEdit(data)"
+              @click="emit('edit', data)"
             />
             <Button 
               icon="pi pi-trash" 
               size="small" 
               text 
               severity="danger"
-              @click="handleDelete(data.id)"
+              @click="emit('delete', data)"
             />
           </div>
         </template>

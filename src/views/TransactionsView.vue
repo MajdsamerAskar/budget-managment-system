@@ -1,9 +1,12 @@
-<!-- TransactionsView.vue -->
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { useTransactionStore } from '@/stores/transactionStore';
 import { useCategoryStore } from '@/stores/categoryStore';
-import { useAccountStore } from '@/stores/accountStore'; // Assuming you have this
+import { useAccountStore } from '@/stores/accountStore';
+import { useBudgetStore } from '@/stores/budgetStore';
+import { supabase } from '@/lib/supabase';
+import { useConfirm } from 'primevue/useconfirm';
+import { useToast } from 'primevue/usetoast';
 
 // Components
 import StatsCard from '@/components/dashboard/StatsCard.vue';
@@ -12,16 +15,23 @@ import TransactionFilters from '@/components/transactions/TransactionFilters.vue
 import TransactionsList from '@/components/transactions/TransactionsList.vue';
 import TransactionDialog from '@/components/transactions/TransactionDialog.vue';
 import Button from 'primevue/button';
+import ConfirmDialog from 'primevue/confirmdialog';
+import Toast from 'primevue/toast';
 
 const transactionStore = useTransactionStore();
 const categoryStore = useCategoryStore();
 const accountStore = useAccountStore();
-const showAddDialog = ref(false);
+const budgetStore = useBudgetStore();
+const confirm = useConfirm();
+const toast = useToast();
+
+const transactionDialog = ref();
 
 onMounted(() => {
   transactionStore.fetchTransactions();
   categoryStore.fetchCategories();
   accountStore.fetchAccounts();
+  budgetStore.fetchBudgets();
 });
 
 // Format currency helper
@@ -32,34 +42,87 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
-// Computed stats - adjust based on your transactionStore structure
-const totalIncome = computed(() => {
-  return transactionStore.transactions
-    .filter(t => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
-});
+// Computed stats
+const totalIncome = computed(() => transactionStore.totalIncome);
+const totalExpenses = computed(() => transactionStore.totalExpenses);
+const netBalance = computed(() => transactionStore.netSavings);
+const transactionCount = computed(() => transactionStore.transactions.length);
 
-const totalExpenses = computed(() => {
-  return transactionStore.transactions
-    .filter(t => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
-});
-
-const netBalance = computed(() => {
-  return totalIncome.value - totalExpenses.value;
-});
-
-const transactionCount = computed(() => {
-  return transactionStore.transactions.length;
-});
-
+// Open dialog for adding
 const openAddDialog = () => {
-  showAddDialog.value = true;
+  transactionDialog.value?.open();
 };
 
-const handleTransactionAdded = () => {
-  showAddDialog.value = false;
-  transactionStore.fetchTransactions();
+// Open dialog for editing
+const handleEdit = (transaction) => {
+  transactionDialog.value?.open(transaction);
+};
+
+// Handle save (add or edit)
+const handleSave = async (data, isEdit) => {
+  try {
+    // Get authenticated user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    const payload = { ...data, user_id: user.id };
+    delete payload.id; // Remove id from payload
+
+    if (isEdit) {
+      await transactionStore.updateTransaction(data.id, payload);
+      toast.add({ 
+        severity: 'success', 
+        summary: 'Updated', 
+        detail: 'Transaction updated successfully', 
+        life: 3000 
+      });
+    } else {
+      // Store handles account & budget updates automatically
+      await transactionStore.addTransaction(payload);
+      toast.add({ 
+        severity: 'success', 
+        summary: 'Created', 
+        detail: 'Transaction added successfully', 
+        life: 3000 
+      });
+    }
+  } catch (err) {
+    toast.add({ 
+      severity: 'error', 
+      summary: 'Error', 
+      detail: err.message, 
+      life: 3000 
+    });
+  }
+};
+
+// Handle delete with confirmation
+const handleDelete = (transaction) => {
+  confirm.require({
+    message: `Are you sure you want to delete this transaction?`,
+    header: 'Delete Transaction',
+    icon: 'pi pi-exclamation-triangle',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      try {
+        // Store handles account & budget reversals automatically
+        await transactionStore.deleteTransaction(transaction.id);
+        toast.add({ 
+          severity: 'success', 
+          summary: 'Deleted', 
+          detail: 'Transaction deleted successfully', 
+          life: 3000 
+        });
+      } catch (err) {
+        toast.add({ 
+          severity: 'error', 
+          summary: 'Error', 
+          detail: transactionStore.error || 'Failed to delete transaction', 
+          life: 3000 
+        });
+      }
+    }
+  });
 };
 </script>
 
@@ -109,12 +172,9 @@ const handleTransactionAdded = () => {
 
     <!-- 3. MIDDLE SECTION: Recent Transactions & Filters -->
     <div class="middle-grid">
-      <!-- Left: Recent Transactions -->
       <div class="card-panel">
         <RecentTransactions />
       </div>
-
-      <!-- Right: Filters & Quick Stats -->
       <div class="card-panel">
         <TransactionFilters />
       </div>
@@ -122,15 +182,21 @@ const handleTransactionAdded = () => {
 
     <!-- 4. BOTTOM SECTION: All Transactions List -->
     <div class="card-panel">
-      <TransactionsList @edit-transaction="openAddDialog" />
+      <TransactionsList 
+        @edit="handleEdit" 
+        @delete="handleDelete" 
+      />
     </div>
 
-    <!-- Add Transaction Dialog -->
-    <transactionDialog 
-      v-model:visible="showAddDialog" 
-      @transaction-added="handleTransactionAdded"
+    <!-- Add/Edit Transaction Dialog -->
+    <TransactionDialog 
+      ref="transactionDialog"
+      @save="handleSave"
     />
 
+    <!-- Confirm Dialog & Toast -->
+    <ConfirmDialog />
+    <Toast />
   </div>
 </template>
 
@@ -140,34 +206,28 @@ const handleTransactionAdded = () => {
   background-color: #f8f9fa;
   min-height: 100vh;
 }
-
 .header-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
 }
-
 .text-secondary { 
   color: #6c757d; 
   margin-top: 0.5rem;
 }
-
-/* GRIDS */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
-
 .middle-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
-
 .card-panel {
   background: white;
   border-radius: 12px;
@@ -175,22 +235,18 @@ const handleTransactionAdded = () => {
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
-/* RESPONSIVE */
 @media (max-width: 1024px) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
   .middle-grid {
     grid-template-columns: 1fr;
   }
 }
-
 @media (max-width: 640px) {
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
   .header-section {
     flex-direction: column;
     align-items: flex-start;
