@@ -4,7 +4,6 @@ import { useBudgetStore } from '@/stores/budgetStore';
 import { useCategoryStore } from '@/stores/categoryStore';
 import { useToast } from 'primevue/usetoast';
 
-// PrimeVue Components
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';

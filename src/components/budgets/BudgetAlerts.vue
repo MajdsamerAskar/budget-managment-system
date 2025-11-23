@@ -4,12 +4,10 @@ import { useBudgetStore } from '@/stores/budgetStore';
 
 const budgetStore = useBudgetStore();
 
-// ✅ BEST PRACTICE: Use computed properties for better reactivity and reusability
 const hasOverBudget = computed(() => budgetStore.overBudgetItems.length > 0);
 const hasExpired = computed(() => budgetStore.expiredBudgets.length > 0);
 const hasWarnings = computed(() => hasOverBudget.value || hasExpired.value);
 
-// ✅ BEST PRACTICE: Create reusable alert data structure
 const alerts = computed(() => {
   const alertList = [];
 
@@ -35,7 +33,6 @@ const alerts = computed(() => {
     });
   }
 
-  // Show success message only if no warnings
   if (!hasWarnings.value) {
     alertList.push({
       id: 'success',
@@ -54,7 +51,6 @@ const alerts = computed(() => {
   <div class="budget-alerts">
     <h3>Budget Alerts</h3>
     
-    <!-- ✅ BEST PRACTICE: Use v-for with key instead of multiple v-if blocks -->
     <div 
       v-for="alert in alerts" 
       :key="alert.id" 
@@ -74,7 +70,6 @@ const alerts = computed(() => {
       </div>
     </div>
 
-    <!-- ✅ OPTIONAL: Empty state if no budgets exist at all -->
     <div v-if="alerts.length === 0" class="empty-state">
       <i class="pi pi-inbox"></i>
       <p>No budget data available</p>
@@ -93,7 +88,6 @@ const alerts = computed(() => {
   margin-bottom: 1rem;
 }
 
-/* ✅ BEST PRACTICE: Use :last-child to remove unnecessary margin */
 .alert-section:last-child {
   margin-bottom: 0;
 }
@@ -107,7 +101,6 @@ const alerts = computed(() => {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ✅ BEST PRACTICE: Add subtle hover effect for interactivity */
 .alert:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -115,12 +108,12 @@ const alerts = computed(() => {
 
 .alert i {
   font-size: 1.25rem;
-  flex-shrink: 0; /* ✅ Prevent icon from shrinking */
+  flex-shrink: 0; 
 }
 
 .alert-content {
-  flex: 1; /* ✅ Allow content to grow */
-  min-width: 0; /* ✅ Prevent text overflow issues */
+  flex: 1; 
+  min-width: 0; 
 }
 
 .alert strong {
@@ -132,7 +125,7 @@ const alerts = computed(() => {
 .alert p {
   margin: 0;
   font-size: 0.875rem;
-  opacity: 0.9; /* ✅ Slightly muted for hierarchy */
+  opacity: 0.9; 
 }
 
 

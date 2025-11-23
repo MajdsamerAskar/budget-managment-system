@@ -119,10 +119,6 @@
 
         </form>
 
-        <div class="footer-terms">
-          <span>By signing up, you agree to our <a href="#">Terms</a> & <a href="#">Privacy Policy</a></span>
-        </div>
-
       </div>
     </div>
   </div>

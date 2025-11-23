@@ -6,12 +6,10 @@
       <div class="overlay">
         <div class="content-wrapper">
           <!-- Star Icon -->
-          <div class="brand-icon">
-            <i class="pi pi-asterisk" style="font-size: 4rem; color: white;"></i>
-          </div>
+          
 
           <!-- Main Text -->
-          <h1>Hello<br />! <span class="wave">👋</span></h1>
+          <h1>Hello! <span class="wave">👋</span></h1>
           
           <p class="sub-text">
             Welcome to My Budget Management System!
@@ -78,9 +76,6 @@
 
         </form>
 
-        <div class="footer-link">
-          <span>Forget password? <a href="#">Click here</a></span>
-        </div>
 
       </div>
     </div>
