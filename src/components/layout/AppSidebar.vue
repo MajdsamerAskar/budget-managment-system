@@ -15,8 +15,8 @@
       </template>
     </Menu>
 
-    <!-- Logout -->
-    <!-- <div class="sidebar-footer">
+    <!-- Logout Section -->
+    <div class="sidebar-footer">
       <Button 
         label="Logout" 
         icon="pi pi-sign-out" 
@@ -25,7 +25,7 @@
         severity="secondary"
         text
       />
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -67,10 +67,18 @@ const menuItems = ref([
   },
 ]);
 
-// const logout = async () => {
-//   await authStore.logout();
-//   router.push('/login');
-// };
+// Logout Function
+const logout = async () => {
+  try {
+    // Execute the logout action from your store (clears Supabase session)
+    await authStore.signOut();
+    
+    // Redirect user to the login page
+    router.push('/login');
+  } catch (error) {
+    console.error('Error logging out:', error);
+  }
+};
 </script>
 
 <style scoped>
@@ -126,5 +134,15 @@ const menuItems = ref([
 .sidebar-footer {
   padding: 1rem;
   border-top: 1px solid var(--surface-800);
+}
+
+/* Ensure the logout button text is light colored to match the theme */
+.sidebar-footer :deep(.p-button) {
+  color: var(--surface-200);
+}
+
+.sidebar-footer :deep(.p-button:hover) {
+  background-color: var(--surface-800);
+  color: var(--surface-0);
 }
 </style>
