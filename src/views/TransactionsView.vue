@@ -10,7 +10,7 @@ import StatsCard from '@/components/dashboard/StatsCard.vue';
 import RecentTransactions from '@/components/dashboard/RecentTransactions.vue';
 import TransactionFilters from '@/components/transactions/TransactionFilters.vue';
 import TransactionsList from '@/components/transactions/TransactionsList.vue';
-import AddTransactionDialog from '@/components/transactions/AddTransactionDialog.vue';
+import TransactionDialog from '@/components/transactions/TransactionDialog.vue';
 import Button from 'primevue/button';
 
 const transactionStore = useTransactionStore();
@@ -126,7 +126,7 @@ const handleTransactionAdded = () => {
     </div>
 
     <!-- Add Transaction Dialog -->
-    <AddTransactionDialog 
+    <transactionDialog 
       v-model:visible="showAddDialog" 
       @transaction-added="handleTransactionAdded"
     />

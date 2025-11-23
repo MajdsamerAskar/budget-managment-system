@@ -1,11 +1,13 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { useBudgetStore } from '@/stores/budgetStore';
+import { useCategoryStore } from '@/stores/categoryStore';
 import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
 
 const router = useRouter();
 const budgetStore = useBudgetStore();
+const categoryStore = useCategoryStore();
 const toast = useToast();
 
 const emit = defineEmits(['create-budget']);
@@ -41,13 +43,15 @@ const handleExportData = () => {
       ...budgets.map(budget => {
         const remaining = budget.total_amount - budget.spent;
         const status = budgetStore.getBudgetStatus(budget);
+        const category = categoryStore.categories.find(c => c.id === budget.category_id);
+        const categoryName = category ? category.name : 'Unknown';
         
         return [
           `"${budget.name}"`,
           budget.total_amount,
           budget.spent,
           remaining,
-          budget.category_id,
+          categoryName,
           budget.start_date,
           budget.end_date,
           status

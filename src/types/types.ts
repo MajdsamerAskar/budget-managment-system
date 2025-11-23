@@ -41,15 +41,11 @@ export interface Transaction {
   user_id: string;
   account_id: string;
   category_id: string;
-  payment_method_id: string;
+  budget_id?: string | null;
+  payment_method: string;
   amount: number;
   transaction_type: "Income" | "Expense";
   date: string;
   description?: string;
   created_at: string;
-}
-
-export interface PaymentMethod {
-  id: string;
-  method_name: string;
 }
