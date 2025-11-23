@@ -44,7 +44,6 @@ onMounted(() => {
         <h1>Financial Dashboard</h1>
         <p class="text-secondary">Welcome back! Here's your financial overview.</p>
       </div>
-      <Button label="Add Transaction" icon="pi pi-plus" />
     </div>
 
     <!-- 2. STATS CARDS ROW - NOW REACTIVE! -->

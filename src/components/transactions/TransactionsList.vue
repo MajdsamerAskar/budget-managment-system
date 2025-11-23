@@ -50,7 +50,6 @@ const getAccountName = (accountId) => {
     <div class="section-header">
       <h3>All Transactions</h3>
       <div class="table-actions">
-        <Button label="Filter" icon="pi pi-filter" size="small" outlined />
         <Button label="Export" icon="pi pi-download" size="small" outlined />
       </div>
     </div>
