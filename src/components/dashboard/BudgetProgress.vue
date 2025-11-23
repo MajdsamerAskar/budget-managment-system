@@ -11,7 +11,7 @@ const budgetStore = useBudgetStore();
     <div class="budget-list">
       <div v-for="budget in budgetStore.activeBudgets" :key="budget.id" class="budget-item">
         <div class="budget-info">
-          <span class="category-name">{{ budget.title || 'Category' }}</span>
+          <span class="category-name">{{ budget.name || 'name' }}</span>
           <span class="values">
             ${{ budget.spent }} / ${{ budget.total_amount }} 
             ({{ budgetStore.getPercentage(budget.spent, budget.total_amount) }}%)

@@ -1,5 +1,9 @@
 <script setup>
 import { useBudgetStore } from '@/stores/budgetStore';
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
+
+// Components
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -7,6 +11,11 @@ import ProgressBar from 'primevue/progressbar';
 import Tag from 'primevue/tag';
 
 const budgetStore = useBudgetStore();
+const confirm = useConfirm();
+const toast = useToast();
+
+// Emit event to tell parent to open the dialog with this budget
+const emit = defineEmits(['edit-budget']);
 
 // Format currency helper
 const formatCurrency = (amount) => {
@@ -25,15 +34,57 @@ const getSeverity = (status) => {
   };
   return severityMap[status];
 };
+
+// --- DELETE HANDLER ---
+const confirmDelete = (budget) => {
+  confirm.require({
+    message: `Are you sure you want to delete the budget "${budget.name}"?`,
+    header: 'Confirm Deletion',
+    icon: 'pi pi-exclamation-triangle',
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      try {
+        await budgetStore.deleteBudget(budget.id);
+        toast.add({ 
+          severity: 'success', 
+          summary: 'Deleted', 
+          detail: 'Budget has been removed', 
+          life: 3000 
+        });
+      } catch (error) {
+        toast.add({ 
+          severity: 'error', 
+          summary: 'Error', 
+          detail: error.message || 'Failed to delete budget', 
+          life: 3000 
+        });
+      }
+    },
+    reject: () => {
+    }
+  });
+};
+
+// --- EDIT HANDLER ---
+const onEditClick = (budget) => {
+  // Pass the budget object up to the parent view
+  emit('edit-budget', budget);
+};
 </script>
 
 <template>
   <div class="budget-table">
+    <!-- REMOVED: ConfirmDialog component - it's now in parent -->
+
     <div class="section-header">
       <h3>All Budgets</h3>
       <div class="table-actions">
-        <Button label="Filter" icon="pi pi-filter" size="small" outlined />
-        <Button label="Export" icon="pi pi-download" size="small" outlined />
+        <Button 
+          label="Refresh" 
+          icon="pi pi-refresh" 
+          outlined 
+          @click="budgetStore.fetchBudgets()" 
+        />
       </div>
     </div>
 
@@ -85,11 +136,31 @@ const getSeverity = (status) => {
       </Column>
       <Column field="start_date" header="Start Date" sortable></Column>
       <Column field="end_date" header="End Date" sortable></Column>
-      <Column header="Actions">
+      
+      <!-- ACTIONS COLUMN -->
+      <Column header="Actions" style="min-width: 8rem">
         <template #body="{ data }">
           <div class="action-buttons-row">
-            <Button icon="pi pi-pencil" size="small" text />
-            <Button icon="pi pi-trash" size="small" text severity="danger" />
+            
+            <!-- EDIT BUTTON -->
+            <Button 
+              icon="pi pi-pencil" 
+              size="small" 
+              text 
+              rounded
+              @click="onEditClick(data)" 
+            />
+
+            <!-- DELETE BUTTON -->
+            <Button 
+              icon="pi pi-trash" 
+              size="small" 
+              text 
+              severity="danger" 
+              rounded
+              @click="confirmDelete(data)" 
+            />
+
           </div>
         </template>
       </Column>

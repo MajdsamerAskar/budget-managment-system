@@ -9,19 +9,20 @@ import BudgetProgress from '@/components/dashboard/BudgetProgress.vue';
 import BudgetAlerts from '@/components/budgets/BudgetAlerts.vue';
 import BudgetQuickActions from '@/components/budgets/BudgetQuickActions.vue';
 import BudgetTable from '@/components/budgets/BudgetTable.vue';
-import AddBudgetDialog from '@/components/budgets/AddBudgetDialog.vue';
+import BudgetDialog from '@/components/budgets/BudgetDialog.vue';
 import Button from 'primevue/button';
+// ✅ REMOVED: ConfirmDialog - using global instance from App.vue
 
 const budgetStore = useBudgetStore();
 const categoryStore = useCategoryStore();
-const showAddDialog = ref(false);
+const showDialog = ref(false);
+const budgetToEdit = ref(null);
 
 onMounted(() => {
   budgetStore.fetchBudgets();
   categoryStore.fetchCategories();
 });
 
-// Format currency helper
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -30,17 +31,26 @@ const formatCurrency = (amount) => {
 };
 
 const openAddDialog = () => {
-  showAddDialog.value = true;
+  budgetToEdit.value = null;
+  showDialog.value = true;
 };
 
-const handleBudgetAdded = () => {
-  showAddDialog.value = false;
-  budgetStore.fetchBudgets(); // Refresh the list
+const handleEditBudget = (budget) => {
+  budgetToEdit.value = budget;
+  showDialog.value = true;
+};
+
+const handleBudgetSaved = () => {
+  showDialog.value = false;
+  budgetToEdit.value = null;
+  budgetStore.fetchBudgets();
 };
 </script>
 
 <template>
   <div class="budgets-container">
+    
+    <!-- ✅ REMOVED: ConfirmDialog - using global instance from App.vue -->
     
     <!-- 1. HEADER SECTION -->
     <div class="header-section">
@@ -85,12 +95,9 @@ const handleBudgetAdded = () => {
 
     <!-- 3. MIDDLE SECTION: Budget Progress & Alerts -->
     <div class="middle-grid">
-      <!-- Left: Budget Progress Component -->
       <div class="card-panel">
         <BudgetProgress />
       </div>
-
-      <!-- Right: Budget Alerts & Quick Actions -->
       <div class="card-panel">
         <BudgetAlerts />
         <BudgetQuickActions @create-budget="openAddDialog" />
@@ -99,13 +106,14 @@ const handleBudgetAdded = () => {
 
     <!-- 4. BOTTOM SECTION: All Budgets Table -->
     <div class="card-panel">
-      <BudgetTable />
+      <BudgetTable @edit-budget="handleEditBudget" />
     </div>
 
-    <!-- Add Budget Dialog -->
-    <AddBudgetDialog 
-      v-model:visible="showAddDialog" 
-      @budget-added="handleBudgetAdded"
+    <!-- Budget Dialog -->
+    <BudgetDialog 
+      v-model:visible="showDialog" 
+      :budgetToEdit="budgetToEdit"
+      @saved="handleBudgetSaved"
     />
 
   </div>
