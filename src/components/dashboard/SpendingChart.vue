@@ -75,6 +75,5 @@ const hasData = computed(() => {
     justify-content: center;
     align-items: center;
     height: 100%;
-    color: #9ca3af;
 }
 </style>

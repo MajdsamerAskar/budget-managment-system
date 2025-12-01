@@ -94,7 +94,6 @@ const formatCurrency = (amount) => {
   display: block;
   font-weight: 600;
   font-size: 0.875rem;
-  color: #495057;
   margin-bottom: 0.5rem;
 }
 
@@ -104,7 +103,6 @@ const formatCurrency = (amount) => {
   gap: 0.5rem;
   margin-top: 1.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #e9ecef;
 }
 
 .quick-stats {
@@ -117,7 +115,6 @@ const formatCurrency = (amount) => {
   margin: 0 0 1rem 0;
   font-size: 0.875rem;
   text-transform: uppercase;
-  color: #6c757d;
 }
 
 .stat-item {
@@ -128,13 +125,10 @@ const formatCurrency = (amount) => {
 }
 
 .stat-item span {
-  color: #6c757d;
   font-size: 0.875rem;
 }
 
-.stat-item strong {
-  color: #212529;
-}
+
 
 .text-green {
   color: #10b981;

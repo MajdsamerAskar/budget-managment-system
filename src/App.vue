@@ -2,12 +2,16 @@
 import { onMounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { useRoute } from 'vue-router';
+import { useTheme } from '@/composables/useTheme';
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 import AppLayout from '@/components/layout/AppLayout.vue';
 
 const authStore = useAuthStore();
 const route = useRoute();
+
+// Initialize theme
+const { isDark } = useTheme();
 
 const isPublicRoute = computed(() => {
   const publicRoutes = ['/login', '/register'];

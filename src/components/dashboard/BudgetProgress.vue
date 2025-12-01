@@ -30,8 +30,16 @@ const budgetStore = useBudgetStore();
 </template>
 
 <style scoped>
-.budget-list { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
-.budget-info { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500;}
+.budget-list { margin-top: 1.5rem;
+   display: flex; 
+   flex-direction: column; 
+   gap: 1.5rem; }
+
+.budget-info { display: flex; 
+  justify-content: space-between; 
+  margin-bottom: 0.5rem; 
+  font-size: 0.9rem; 
+  font-weight: 500;}
 /* Customizing PrimeVue Bar Color based on status */
 :deep(.p-progressbar-value) { background: #10b981; }
 :deep(.danger-bar .p-progressbar-value) { background: #ef4444; }

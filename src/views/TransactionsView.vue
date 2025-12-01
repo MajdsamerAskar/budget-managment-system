@@ -203,7 +203,6 @@ const handleDelete = (transaction) => {
 <style scoped>
 .transactions-container {
   padding: 2rem;
-  background-color: #f8f9fa;
   min-height: 100vh;
 }
 .header-section {
@@ -213,7 +212,6 @@ const handleDelete = (transaction) => {
   margin-bottom: 2rem;
 }
 .text-secondary { 
-  color: #6c757d; 
   margin-top: 0.5rem;
 }
 .stats-grid {
@@ -229,10 +227,8 @@ const handleDelete = (transaction) => {
   margin-bottom: 2rem;
 }
 .card-panel {
-  background: white;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
 @media (max-width: 1024px) {

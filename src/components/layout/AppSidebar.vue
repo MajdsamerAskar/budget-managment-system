@@ -2,8 +2,10 @@
   <div class="sidebar-container">
     <!-- Logo -->
     <div class="sidebar-header">
+      <i class="pi pi-wallet brand-icon"></i>
       <h2>BUDGET PRO</h2>
     </div>
+    
     <!-- Menu -->
     <Menu :model="menuItems" class="sidebar-menu">
       <template #item="{ item }">
@@ -13,16 +15,20 @@
         </router-link>
       </template>
     </Menu>
-    <!-- Logout Section -->
+    
+    <!-- Footer with Theme Toggle and Logout -->
     <div class="sidebar-footer">
-      <Button 
-        label="Logout" 
-        icon="pi pi-sign-out" 
-        @click="logout"
-        class="w-full"
-        severity="secondary"
-        text
-      />
+      <div class="footer-actions">
+        <ThemeToggle />
+        <Button 
+          icon="pi pi-sign-out" 
+          @click="logout"
+          severity="secondary"
+          text
+          v-tooltip.top="'Logout'"
+          class="logout-btn"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -33,6 +39,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 import Menu from 'primevue/menu';
 import Button from 'primevue/button';
+import ThemeToggle from '@/components/ThemeToggle.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -78,10 +85,7 @@ const handleMenuClick = () => {
 // Logout Function
 const logout = async () => {
   try {
-    // Execute the logout action from your store (clears Supabase session)
     await authStore.signOut();
-    
-    // Redirect user to the login page
     router.push('/login');
   } catch (error) {
     console.error('Error logging out:', error);
@@ -94,22 +98,29 @@ const logout = async () => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: white;
-  color: #333;
+  background-color: var(--bg-card);
 }
 
 .sidebar-header {
   padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.brand-icon {
+  font-size: 1.75rem;
+  color: var(--color-primary);
 }
 
 .sidebar-header h2 {
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0;
-  color: #333;
-  text-align: center;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
 }
 
 .sidebar-menu {
@@ -126,39 +137,55 @@ const logout = async () => {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  color: #6b7280;
   text-decoration: none;
+  color: var(--text-secondary);
   border-radius: 6px;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  font-weight: 500;
 }
 
 .menu-item-link:hover {
-  background-color: #f3f4f6;
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .menu-item-link.router-link-active {
-  background-color: #e5e7eb;
-  color: #1f2937;
+  background-color: var(--color-primary);
+  color: white;
   font-weight: 600;
 }
 
 .sidebar-footer {
   padding: 1rem;
-  border-top: 1px solid #e5e7eb;
-  align-self: flex-start;
+  border-top: 1px solid var(--border-color);
   margin-top: auto;
   width: 100%;
-  text-align: left;
 }
 
-.sidebar-footer :deep(.p-button) {
-  color: #6b7280;
-  text-align: left;
-  align-self: start;
+.footer-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-around;
 }
 
-.sidebar-footer :deep(.p-button:hover) {
-  background-color: #f3f4f6;
-  color: #1f2937;
+.logout-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .sidebar-header {
+    padding: 1rem;
+  }
+
+  .sidebar-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .brand-icon {
+    font-size: 1.5rem;
+  }
 }
 </style>

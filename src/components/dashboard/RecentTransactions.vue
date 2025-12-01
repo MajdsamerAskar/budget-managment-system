@@ -103,7 +103,6 @@ const recentTransactions = computed(() =>
 .empty-state {
   text-align: center;
   padding: 2rem;
-  color: #6c757d;
 }
 
 .empty-state p {
@@ -142,12 +141,10 @@ const recentTransactions = computed(() =>
   font-weight: 600; 
   margin: 0;
   font-size: 0.9375rem;
-  color: #1f2937;
 }
 
 .t-date { 
   font-size: 0.8125rem; 
-  color: #6b7280; 
   margin: 0.25rem 0 0 0;
 }
 

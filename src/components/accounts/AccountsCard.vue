@@ -7,6 +7,7 @@
           <div class="card-actions">
             <Button 
               icon="pi pi-pencil" 
+              style="color: white;"
               @click="$emit('edit')"
               text
               rounded
@@ -82,17 +83,16 @@ const getAccountIcon = (type: "Bank" | "Wallet" | "Credit") => {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
 }
 
 .account-icon {
   font-size: 2rem;
-  color: white;
 }
 
 .card-actions {
   display: flex;
   gap: 0.25rem;
+  color: white !important;
 }
 
 .account-balance {

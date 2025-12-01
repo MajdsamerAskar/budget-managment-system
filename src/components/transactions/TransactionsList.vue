@@ -220,7 +220,6 @@ const handleExportData = () => {
 }
 
 .category-badge {
-  background: #e9ecef;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.875rem;

@@ -268,7 +268,6 @@ h1 {
 /* --- RIGHT PANEL --- */
 .right-panel {
   flex: 1;
-  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -290,25 +289,21 @@ h1 {
   font-size: 1.5rem;
   font-weight: 800;
   margin-bottom: 1.5rem;
-  color: #000;
 }
 
 .welcome-header h3 {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: #111;
 }
 
 .welcome-header p {
-  color: #666;
   font-size: 0.9rem;
   margin-bottom: 1.5rem;
   line-height: 1.5;
 }
 
 .welcome-header a {
-  color: #111;
   font-weight: 600;
   text-decoration: underline;
 }
@@ -320,7 +315,6 @@ h1 {
 
 :deep(.custom-input) {
   width: 100%;
-  background-color: #f9fafb;
   border: none;
   border-bottom: 1px solid #ddd;
   border-radius: 0;

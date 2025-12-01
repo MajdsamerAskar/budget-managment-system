@@ -27,7 +27,6 @@ defineEmits<{
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: white;
     color: #333;
     position: sticky;
     top: 0;
@@ -55,7 +54,6 @@ defineEmits<{
   .hamburger-menu span {
     width: 25px;
     height: 3px;
-    background: #333;
     border-radius: 2px;
     transition: all 0.3s ease;
   }

@@ -285,11 +285,9 @@ const handleSubmit = async () => {
 .field label {
   font-weight: 600;
   font-size: 0.875rem;
-  color: #495057;
 }
 
 .text-secondary {
-  color: #6c757d;
   font-size: 0.75rem;
 }
 

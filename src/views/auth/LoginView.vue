@@ -247,25 +247,23 @@ h1 {
   font-size: 1.5rem;
   font-weight: 800;
   margin-bottom: 2rem;
-  color: #000;
+ 
 }
 
 .welcome-header h3 {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: #111;
+  
 }
 
 .welcome-header p {
-  color: #666;
   font-size: 0.9rem;
   margin-bottom: 2rem;
   line-height: 1.5;
 }
 
 .welcome-header a {
-  color: #111;
   font-weight: 600;
   text-decoration: underline;
 }

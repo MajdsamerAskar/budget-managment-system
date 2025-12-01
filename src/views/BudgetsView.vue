@@ -122,7 +122,6 @@ const handleBudgetSaved = () => {
 <style scoped>
 .budgets-container {
   padding: 2rem;
-  background-color: #f8f9fa;
   min-height: 100vh;
 }
 
@@ -134,7 +133,6 @@ const handleBudgetSaved = () => {
 }
 
 .text-secondary { 
-  color: #6c757d; 
   margin-top: 0.5rem;
 }
 
@@ -154,10 +152,8 @@ const handleBudgetSaved = () => {
 }
 
 .card-panel {
-  background: white;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
 /* RESPONSIVE */

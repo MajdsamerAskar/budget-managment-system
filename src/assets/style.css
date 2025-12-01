@@ -60,11 +60,178 @@
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
-
+  --border-color: #e5e7eb;
   /* Transitions */
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
   --transition-slow: 350ms ease;
+}
+/* ============================================
+   DARK MODE THEME VARIABLES
+   ============================================ */
+
+/* Dark Mode Colors */
+.app-dark {
+  /* Colors - Adjusted for dark mode */
+  --color-primary: #60a5fa;
+  --color-success: #34d399;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+  --color-info: #22d3ee;
+  
+  /* Background Colors - Dark Theme */
+  --bg-primary: #0f172a;
+  --bg-card: #1e293b;
+  --bg-hover: #334155;
+  
+  /* Text Colors - Dark Theme */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  /* Shadows - Darker for dark mode */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+}
+
+/* Apply smooth transitions for theme switching */
+body,
+.card-panel,
+.stats-card,
+.account-card,
+.dashboard-container,
+.budgets-container,
+.transactions-container,
+.accounts-view,
+.categories-page {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Dark mode specific overrides */
+.app-dark .t-item {
+  border-bottom-color: #334155;
+}
+.app-dark .right-panel {
+  background-color: #1e293b !important;
+}
+.app-dark .card-panel,
+.app-dark .stats-card,
+.app-dark .account-card {
+  border: 1px solid #334155;
+  background-color: #1e293b;
+}
+.app-dark .p-datatable-tbody > tr {
+  background-color: #1e293b !important;
+}
+.app-dark .p-paginator {
+  background-color: #1e293b !important;
+}
+.app-dark .p-datatable .p-datatable-thead > tr > th {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+.app-dark .p-datatable .p-datatable-tbody > tr 
+.app-dark .p-datatable .p-datatable-tbody > tr {
+  background-color: #1e293b;
+}
+.app-dark .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {
+      background-color: #334155 !important;
+      border-radius: 2px;
+}
+.p-datatable-table-container {
+  border-radius: 10px !important;
+}
+.p-datatable-tbody {
+  padding: 10px !important;
+}
+.app-dark .p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #334155;
+}
+
+/* Dark mode scrollbar */
+.app-dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.app-dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.app-dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Dark mode alerts */
+.app-dark .alert {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+}
+/* ============================================
+   PRIMEVUE MENU DARK MODE
+   ============================================ */
+
+.app-dark .p-menu {
+  background-color: transparent;
+  border: none;
+  color: var(--text-primary);
+}
+
+.app-dark .p-menu .p-menuitem-link {
+  color: var(--text-secondary);
+}
+
+.app-dark .p-menu .p-menuitem-link:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.app-dark .p-menu .p-menuitem-link:focus {
+  box-shadow: none;
+}
+
+.app-dark .menu-item-link {
+  color: var(--text-secondary);
+}
+
+.app-dark .menu-item-link:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.app-dark .menu-item-link.router-link-active {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Sidebar specific dark mode */
+.app-dark .sidebar-container {
+  background-color: var(--bg-card);
+}
+
+.app-dark .sidebar-header {
+  border-bottom-color: var(--border-color);
+}
+
+.app-dark .sidebar-header h2 {
+  color: var(--text-primary);
+}
+
+.app-dark .brand-icon {
+  color: var(--color-primary);
+}
+
+.app-dark .sidebar-footer {
+  border-top-color: var(--border-color);
+}
+
+.app-dark .sidebar-footer .p-button {
+  color: var(--text-secondary);
+}
+
+.app-dark .sidebar-footer .p-button:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 /* ============================================

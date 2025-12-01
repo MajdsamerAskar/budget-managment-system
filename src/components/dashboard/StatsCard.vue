@@ -22,13 +22,11 @@ defineProps({
 
 <style scoped>
 .stats-card {
-  background: white;
   padding: 1.5rem;
   border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
   position: relative;
   overflow: hidden;
 }
@@ -38,7 +36,6 @@ defineProps({
 }
 
 .title { 
-  color: #6c757d; 
   font-size: 0.9rem; 
   font-weight: 500;
   display: block;
@@ -47,7 +44,6 @@ defineProps({
 .amount { 
   margin: 0.5rem 0 0 0; 
   font-size: 1.5rem; 
-  color: #212529;
   font-weight: 600;
 }
 
